@@ -1,0 +1,8 @@
+.QueryForm{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.QueryForm h2{
+    color: #0c66d3;
+}
