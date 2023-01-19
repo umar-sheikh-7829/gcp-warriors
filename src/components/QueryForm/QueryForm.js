@@ -88,9 +88,27 @@ export default function QueryForm(props) {
         />
 
         {operator === "IN" ? (
-              <FormGroup>
-                {MenuitemList3}
-              </FormGroup>
+              // <FormGroup>
+              //   {MenuitemList3}
+              // </FormGroup>
+              <Controller
+                control={props.control}
+                name={`test.${props.index}.key`}
+                render={({
+                  field: { onChange, onBlur, value, name, ref },
+                  fieldState: { invalid, isTouched, isDirty, error },
+                  formState,
+                }) => (
+                  <FormControl sx={{ width: "150px", margin: "20px" }}>
+                    <TextField
+                      id="outlined-multiline-flexible"
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                    />
+                  </FormControl>
+                )}
+              />
         ) : ((((operator === "equal") || (operator === "not-equal") || (operator === "greater-than") || (operator === "lesser-than") || (operator === "greater-than-or-equal") || (operator === "lesser-than-or-equal")) ?
           <Controller
             control={props.control}
@@ -247,7 +265,7 @@ export default function QueryForm(props) {
     MenuitemList3.push(
         <Controller
         control={props.control}
-        name={`test.${props.index}.inValue.${index}`}
+        name={`test.${props.index}.key.${index}`}
         render={({
           field: { onChange, onBlur, value, name, ref },
           fieldState: { invalid, isTouched, isDirty, error },
@@ -282,24 +300,19 @@ export default function QueryForm(props) {
               label="Select a clause"
               onChange={(event) => {
                 if (props.selectLimit === true && event.target.value === "LIMIT") {
-                    setClause("LIMIT");
                     props.setSelectLimit(!props.selectLimit);
                 }
-                else{
-                    setClause(event.target.value);
+                else if(props.selectCount === true && event.target.value === "COUNT"){
+                    props.setSelectCount(!props.selectCount);
                 }
-                onChange(event.target.value)
-                console.log(clause);
+                setClause(event.target.value);
+                onChange(event.target.value);
               }}
             >
               <MenuList value="WHERE">WHERE</MenuList>
               <MenuList value="ORDER BY">ORDER BY</MenuList>
-              {props.selectLimit === true ? (
-                <MenuList value="LIMIT">LIMIT</MenuList>
-              ) : (
-                <></>
-              )}
-              <MenuList value="COUNT">COUNT</MenuList>
+              <MenuList hidden={!props.selectLimit} value="LIMIT">LIMIT</MenuList>
+              <MenuList hidden={!props.selectCount}value="COUNT">COUNT</MenuList>
             </Select>
           </FormControl>
         )}
@@ -307,17 +320,13 @@ export default function QueryForm(props) {
 
       <SelectedQuery clauseType={clause} />
 
-      <DeleteIcon
+      { (props.index === props.length-1) ? <DeleteIcon
         color="primary"
         sx={{ fontSize: "50px" }}
         onClick={() => {
-            console.log(props.index);
-            if (!props.selectLimit === true) {
-                props.setSelectLimit(!props.selectLimit);
-            }
             props.remove(props.index);
         }}
-      />
+      /> : <></>}
     </div>
   );
 }
